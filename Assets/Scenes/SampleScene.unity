@@ -3194,39 +3194,39 @@ MonoBehaviour:
   - obj: {fileID: 919132148007809502}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132148553802155}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132147933148180}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132148176154851}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132148889342893}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132148333323850}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132149552549409}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 919132148090962910}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   - obj: {fileID: 814221812}
     type: 0
     ammo: 0
-    isActive: 0
+    inventoryIndex: -1
   itemsInInventory: []
   inventorySize: 4
   currentEquippedItem: 0
@@ -5821,7 +5821,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &919132147933148181
 Animator:
   serializedVersion: 5
@@ -5891,7 +5891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e0c6c2b9fca74d985bb3d4d18bb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magazineSize: 8
+  magazineSize: 10
   muzzleVelocity: 200
   bullet: {fileID: 4440924034055739044, guid: 9a0b3ec9ce19da1429c20f23a76464a7, type: 3}
   isFullAuto: 0
@@ -5969,8 +5969,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e0c6c2b9fca74d985bb3d4d18bb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magazineSize: 0
-  muzzleVelocity: 0
+  magazineSize: 6
+  muzzleVelocity: 350
   bullet: {fileID: 4440924034055739044, guid: 02f7605aee1a3f8469a84a1e02e35d28, type: 3}
   isFullAuto: 0
   firePoint: {fileID: 1653100656}
@@ -6083,10 +6083,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e0c6c2b9fca74d985bb3d4d18bb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magazineSize: 0
-  muzzleVelocity: 0
+  magazineSize: 18
+  muzzleVelocity: 160
   bullet: {fileID: 4440924034055739044, guid: bddafca30b2acef4cb21f13f08c16267, type: 3}
-  isFullAuto: 0
+  isFullAuto: 1
   firePoint: {fileID: 1853876589}
   anim: {fileID: 919132148333323851}
 --- !u!1 &919132148553802155
@@ -6119,7 +6119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e0c6c2b9fca74d985bb3d4d18bb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magazineSize: 20
+  magazineSize: 12
   muzzleVelocity: 150
   bullet: {fileID: 4440924034055739044, guid: 9a0b3ec9ce19da1429c20f23a76464a7, type: 3}
   isFullAuto: 1
@@ -6163,7 +6163,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!95 &919132148889342894
 Animator:
   serializedVersion: 5
@@ -6197,10 +6197,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e0c6c2b9fca74d985bb3d4d18bb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magazineSize: 0
-  muzzleVelocity: 0
+  magazineSize: 25
+  muzzleVelocity: 120
   bullet: {fileID: 4440924034055739044, guid: bddafca30b2acef4cb21f13f08c16267, type: 3}
-  isFullAuto: 0
+  isFullAuto: 1
   firePoint: {fileID: 601337093}
   anim: {fileID: 919132148889342894}
 --- !u!1 &919132149552549409
@@ -6254,8 +6254,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b0e0c6c2b9fca74d985bb3d4d18bb60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  magazineSize: 0
-  muzzleVelocity: 0
+  magazineSize: 1
+  muzzleVelocity: 600
   bullet: {fileID: 4440924034055739044, guid: 02f7605aee1a3f8469a84a1e02e35d28, type: 3}
   isFullAuto: 0
   firePoint: {fileID: 126799615}

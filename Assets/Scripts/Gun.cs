@@ -30,6 +30,7 @@ public class Gun : MonoBehaviour
         GameObject temp_bullet = Instantiate(bullet, firePoint.transform.position, firePoint.transform.rotation);
         temp_bullet.GetComponent<Rigidbody>().velocity = temp_bullet.transform.forward * muzzleVelocity;
         temp_bullet.transform.Rotate(new Vector3(0,180,0));
+        player.removeAmmo();
         anim.ResetTrigger("Fire");
         Debug.Log("Fired Weapon. ");
     }

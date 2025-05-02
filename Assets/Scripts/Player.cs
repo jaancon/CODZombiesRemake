@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
         public GameObject obj;
         public itemType type;
         public int ammo;
-        public bool isActive;
+        public int inventoryIndex;
 
         public Item(GameObject _obj, itemType _type)
         {
@@ -48,8 +48,11 @@ public class Player : MonoBehaviour
     private void Start()
     {
         itemsInInventory = new Item[inventorySize];
-        itemsInInventory[0] = itemPool[2];
-        itemsInInventory[1] = itemPool[3];
+        itemsInInventory[0] = itemPool[4];
+        itemsInInventory[1] = itemPool[5];
+
+        itemsInInventory[0].inventoryIndex = 0;
+        itemsInInventory[1].inventoryIndex = 1;
 
         for (int i = 2; i < itemsInInventory.Length; i++)
         {
@@ -82,7 +85,7 @@ public class Player : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0))
         {
-            UseItem(itemPool[currentEquippedItem]);
+            UseItem(itemsInInventory[currentEquippedItem]);
         }
         if (Input.GetKeyDown(KeyCode.R)) 
         {
@@ -92,33 +95,60 @@ public class Player : MonoBehaviour
 
     public void SwitchLoadout(int currentSelectedWeapon, int switchTarget)
     {
+        foreach (Item item in itemsInInventory)
+        {
+            if (item == null || item.obj == null) { break; }
+            if (itemPool[switchTarget].obj.name == item.obj.name)
+            {
+                SwitchWeaponInHand(item.inventoryIndex);
+                return;
+            }
+        }
+
+        int tempIndex = itemsInInventory[currentSelectedWeapon].inventoryIndex;
+        itemsInInventory[currentSelectedWeapon].inventoryIndex = -1;
         itemsInInventory[currentSelectedWeapon] = itemPool[switchTarget];
+        itemsInInventory[currentSelectedWeapon].inventoryIndex = tempIndex;
+
         itemPool[currentSelectedWeapon].obj.SetActive(false);
         itemPool[switchTarget].obj.SetActive(true);
     }
     
     public void SwitchWeaponInHand(int nextSelectedGun)
     {
-        if (itemsInInventory[nextSelectedGun] == null) { return; }
+        if (nextSelectedGun == currentEquippedItem) { return; }
         try
         {
-            itemsInInventory[currentEquippedItem].obj.SetActive(false);
+            if (itemsInInventory[currentEquippedItem].obj != null) 
+            {
+                itemsInInventory[currentEquippedItem].obj.SetActive(false);
+            }
+
             currentEquippedItem = nextSelectedGun;
-            itemsInInventory[currentEquippedItem].obj.SetActive(true);
+
+            if (itemsInInventory[currentEquippedItem].obj != null)
+            {
+                itemsInInventory[currentEquippedItem].obj.SetActive(true);
+            }
         } catch (System.Exception e)
         {
-            Debug.LogError(e.Message + "|| this probably came because whatever slot you're trying to switch to does not exist.");
+            Debug.LogWarning(e.Message + " || this probably came because whatever slot you're trying to switch to does not exist.");
         }
     }
 
     private void UseItem(Item item)
     {
+        if (item.obj == null)
+        {
+            Debug.LogWarning("Item is null."); 
+            return; 
+        }
+
         switch (item.type)
         {
             case itemType.Weapon:
-                if (itemPool[currentEquippedItem].ammo <= 0) { break; }
+                if (itemsInInventory[currentEquippedItem].ammo <= 0) { break; }
                 StartCoroutine(ShootWeapon());
-                item.ammo--;
                 break;
             case itemType.UsableItem:
                 break;
@@ -135,11 +165,15 @@ public class Player : MonoBehaviour
         {
             while (Input.GetMouseButton(0)) 
             {
+                if (itemsInInventory[currentEquippedItem].ammo <= 0) { break; }
                 itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().anim.SetTrigger("Fire");
+
                 yield return null;
             }
         }  else
         {
+            if (itemPool[currentEquippedItem].ammo <= 0) { yield return null; }
+
             itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().anim.SetTrigger("Fire");
         }
     }
@@ -150,5 +184,10 @@ public class Player : MonoBehaviour
         {
             itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().anim.SetTrigger("Reload");;
         }
+    }
+
+    public void removeAmmo()
+    {
+        itemsInInventory[currentEquippedItem].ammo--;
     }
 }
