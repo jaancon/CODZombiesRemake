@@ -13,13 +13,17 @@ public class Player : MonoBehaviour
         public itemType type;
         public int ammo;
         public int inventoryIndex;
+        public weaponType weaponType;
 
-        public Item(GameObject _obj, itemType _type)
+        public Item(GameObject _obj, itemType _type, weaponType _weaponType = weaponType.NonWeapon)
         {
             obj = _obj;
             type = _type;
+            weaponType = _weaponType;
         }
     }
+
+    public Dictionary<weaponType, int> ammo;
 
     public enum itemType
     {
@@ -27,11 +31,21 @@ public class Player : MonoBehaviour
         UsableItem
     }
 
+    public enum weaponType
+    {
+        NonWeapon,
+        Pistol,
+        Shotgun,
+        SMG,
+        Sniper,
+        RPG
+    }
+
     public int SearchForItem(string name)
     {
-        for (int i = 0; i < itemPool.Length; i++)
+        for (int i = 0; i < itemsInInventory.Length; i++)
         {
-            if (itemPool[i].obj.name == name)
+            if (itemsInInventory[i].obj.name == name)
             {
                 return i;
             }
@@ -47,6 +61,17 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        {
+            ammo = new Dictionary<weaponType, int>
+            {
+                { weaponType.NonWeapon, 0 },
+                { weaponType.Pistol, 30 },
+                { weaponType.Shotgun, 10 },
+                { weaponType.SMG, 60 },
+                { weaponType.Sniper, 5 },
+                { weaponType.RPG, 2 }
+            };
+        }
         itemsInInventory = new Item[inventorySize];
         itemsInInventory[0] = itemPool[4];
         itemsInInventory[1] = itemPool[5];
@@ -189,5 +214,11 @@ public class Player : MonoBehaviour
     public void removeAmmo()
     {
         itemsInInventory[currentEquippedItem].ammo--;
+    }
+
+    public void DropWeapon()
+    {
+        itemsInInventory[currentEquippedItem] = null;
+        //add a function for creating a visual for dropping the item.
     }
 }
