@@ -1,9 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Lootbox : MonoBehaviour
 {
+    [Serializable] public class Meshes
+    {
+        public Mesh mesh;
+        public int itemPoolIndex;
+    }
+
     public GameObject lootboxItem;
     public Mesh[] meshes;
     private MeshFilter lbiFilter;
@@ -35,21 +42,21 @@ public class Lootbox : MonoBehaviour
 
     private IEnumerator LootboxAnimation()
     {
+        Player playerScript = GameObject.Find("Player").GetComponent<Player>();
+
         while (!hasStoppedBox)
         {
-            lbiFilter.mesh = meshes[Random.Range(0, meshes.Length)];
+            lbiFilter.mesh = meshes[UnityEngine.Random.Range(0, meshes.Length)];
             yield return new WaitForSeconds(0.3f);
         }
 
-        lbiFilter.mesh = meshes[Random.Range(0, meshes.Length)];
+        int randomNumber = UnityEngine.Random.Range(0, meshes.Length);
+        lbiFilter.mesh = meshes[randomNumber];
         
-        Player playerScript = GameObject.Find("Player").GetComponent<Player>();
         string name = lbiFilter.GetComponent<MeshFilter>().mesh.name;
         name.Remove(name.Length - 9);
         Debug.Log(name);
 
-        playerScript.SwitchLoadout(
-            playerScript.currentEquippedItem,
-            playerScript.SearchForItem(name));
+        playerScript.SwitchLoadout(playerScript.currentEquippedItem, randomNumber);
     }
 }

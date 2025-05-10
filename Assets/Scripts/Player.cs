@@ -1,9 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -11,9 +15,9 @@ public class Player : MonoBehaviour
     {
         public GameObject obj;
         public itemType type;
-        public int ammo;
         public int inventoryIndex;
         public weaponType weaponType;
+        public Vector3 originalPosition;
 
         public Item(GameObject _obj, itemType _type, weaponType _weaponType = weaponType.NonWeapon)
         {
@@ -21,6 +25,8 @@ public class Player : MonoBehaviour
             type = _type;
             weaponType = _weaponType;
         }
+
+        public Item() { }
     }
 
     public Dictionary<weaponType, int> ammo;
@@ -41,26 +47,21 @@ public class Player : MonoBehaviour
         RPG
     }
 
-    public int SearchForItem(string name)
-    {
-        for (int i = 0; i < itemsInInventory.Length; i++)
-        {
-            if (itemsInInventory[i].obj.name == name)
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     public Item[] itemPool;
     public Item[] itemsInInventory;
 
     public int inventorySize = 2;
     public int currentEquippedItem = 0;
 
+    public Text ammoText;
+
     private void Start()
     {
+        foreach (Item item in itemPool)
+        {
+            item.originalPosition = item.obj.transform.position;
+        }
+
         {
             ammo = new Dictionary<weaponType, int>
             {
@@ -83,15 +84,17 @@ public class Player : MonoBehaviour
         {
             itemsInInventory[i] = null;
         }
-
-        foreach (Item item in itemPool) 
-        {
-            item.ammo = itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().magazineSize;
-        }
     }
 
     private void Update()
     {
+        string text = "";
+        foreach (var pair in ammo)
+        {
+            text += pair.Key.ToString() + ", " + pair.Value.ToString() + "\n";
+        }
+        ammoText.text = text;
+
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             SwitchWeaponInHand(0);
@@ -112,58 +115,59 @@ public class Player : MonoBehaviour
         {
             UseItem(itemsInInventory[currentEquippedItem]);
         }
-        if (Input.GetKeyDown(KeyCode.R)) 
+        if (Input.GetMouseButton(1))
         {
-            ReloadWeapon();
+            itemsInInventory[currentEquippedItem].obj.transform.position = itemsInInventory[currentEquippedItem].originalPosition +
+                                                                            new Vector3(-0.3f, 0, 0);
+        } else
+        {
+            itemsInInventory[currentEquippedItem].obj.transform.position = itemsInInventory[currentEquippedItem].originalPosition;
         }
     }
 
-    public void SwitchLoadout(int currentSelectedWeapon, int switchTarget)
+    public void SwitchLoadout(int inventoryCurrentHand, int itemPoolNextHand)
     {
         foreach (Item item in itemsInInventory)
         {
-            if (item == null || item.obj == null) { break; }
-            if (itemPool[switchTarget].obj.name == item.obj.name)
+            if (item == null) { continue; }
+            if (item == itemPool[itemPoolNextHand])
             {
                 SwitchWeaponInHand(item.inventoryIndex);
                 return;
             }
         }
 
-        int tempIndex = itemsInInventory[currentSelectedWeapon].inventoryIndex;
-        itemsInInventory[currentSelectedWeapon].inventoryIndex = -1;
-        itemsInInventory[currentSelectedWeapon] = itemPool[switchTarget];
-        itemsInInventory[currentSelectedWeapon].inventoryIndex = tempIndex;
-
-        itemPool[currentSelectedWeapon].obj.SetActive(false);
-        itemPool[switchTarget].obj.SetActive(true);
+        if (itemsInInventory[currentEquippedItem] != null && itemsInInventory[currentEquippedItem].obj != null)
+        {
+            itemsInInventory[currentEquippedItem].obj.SetActive(false);
+        }
+        itemsInInventory[currentEquippedItem] = itemPool[itemPoolNextHand];
+        itemsInInventory[currentEquippedItem].obj.SetActive(true);
+        itemsInInventory[currentEquippedItem].inventoryIndex = currentEquippedItem;
     }
     
-    public void SwitchWeaponInHand(int nextSelectedGun)
+    public void SwitchWeaponInHand(int inventoryNextHand)
     {
-        if (nextSelectedGun == currentEquippedItem) { return; }
-        try
-        {
-            if (itemsInInventory[currentEquippedItem].obj != null) 
-            {
-                itemsInInventory[currentEquippedItem].obj.SetActive(false);
-            }
+        if (inventoryNextHand == currentEquippedItem) { return; }
 
-            currentEquippedItem = nextSelectedGun;
-
-            if (itemsInInventory[currentEquippedItem].obj != null)
-            {
-                itemsInInventory[currentEquippedItem].obj.SetActive(true);
-            }
-        } catch (System.Exception e)
+        if (itemsInInventory[currentEquippedItem] != null &&
+            itemsInInventory[currentEquippedItem].obj != null)
         {
-            Debug.LogWarning(e.Message + " || this probably came because whatever slot you're trying to switch to does not exist.");
+            itemsInInventory[currentEquippedItem].obj.SetActive(false);
+        }
+
+        currentEquippedItem = inventoryNextHand;
+
+        if (itemsInInventory[currentEquippedItem] != null &&
+            itemsInInventory[currentEquippedItem].obj != null)  
+        {
+            itemsInInventory[currentEquippedItem].obj.SetActive(true);
         }
     }
 
     private void UseItem(Item item)
     {
-        if (item.obj == null)
+        if (item == null)
         {
             Debug.LogWarning("Item is null."); 
             return; 
@@ -172,7 +176,7 @@ public class Player : MonoBehaviour
         switch (item.type)
         {
             case itemType.Weapon:
-                if (itemsInInventory[currentEquippedItem].ammo <= 0) { break; }
+                if (ammo[itemsInInventory[currentEquippedItem].weaponType] <= 0) { break; }
                 StartCoroutine(ShootWeapon());
                 break;
             case itemType.UsableItem:
@@ -190,20 +194,20 @@ public class Player : MonoBehaviour
         {
             while (Input.GetMouseButton(0)) 
             {
-                if (itemsInInventory[currentEquippedItem].ammo <= 0) { break; }
+                if (ammo[itemsInInventory[currentEquippedItem].weaponType] <= 0) { break; }
                 itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().anim.SetTrigger("Fire");
 
-                yield return null;
+                yield break;
             }
         }  else
         {
-            if (itemPool[currentEquippedItem].ammo <= 0) { yield return null; }
+            if (ammo[itemPool[currentEquippedItem].weaponType] <= 0) { yield return null; }
 
             itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().anim.SetTrigger("Fire");
         }
     }
 
-    private void ReloadWeapon() 
+    private void ReloadWeapon()
     {   
         if (itemsInInventory[currentEquippedItem].type == itemType.Weapon) 
         {
@@ -213,7 +217,7 @@ public class Player : MonoBehaviour
 
     public void removeAmmo()
     {
-        itemsInInventory[currentEquippedItem].ammo--;
+        ammo[itemsInInventory[currentEquippedItem].weaponType]--;
     }
 
     public void DropWeapon()
