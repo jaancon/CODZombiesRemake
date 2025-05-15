@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
     {
         foreach (Item item in itemPool)
         {
-            item.originalPosition = item.obj.transform.position;
+            item.originalPosition = item.obj.transform.localPosition;
         }
 
         {
@@ -117,11 +117,11 @@ public class Player : MonoBehaviour
         }
         if (Input.GetMouseButton(1))
         {
-            itemsInInventory[currentEquippedItem].obj.transform.position = itemsInInventory[currentEquippedItem].originalPosition +
+            itemsInInventory[currentEquippedItem].obj.transform.localPosition = itemsInInventory[currentEquippedItem].originalPosition +
                                                                             new Vector3(-0.3f, 0, 0);
         } else
         {
-            itemsInInventory[currentEquippedItem].obj.transform.position = itemsInInventory[currentEquippedItem].originalPosition;
+            itemsInInventory[currentEquippedItem].obj.transform.localPosition = itemsInInventory[currentEquippedItem].originalPosition;
         }
     }
 

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2004691611270319868}
   - component: {fileID: 3076070260540763125}
   - component: {fileID: -1034251335928569885}
+  - component: {fileID: 2820234457418520745}
   m_Layer: 0
   m_Name: BulletPistol
   m_TagString: Untagged
@@ -256,3 +257,16 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &2820234457418520745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4440924034055739044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fa37db6eec89749900bf7408392418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  penetrationChance: 20
