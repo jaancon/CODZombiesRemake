@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -727850332997288095}
   m_Layer: 0
   m_Name: BulletSMG
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -270,3 +270,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   penetrationChance: 15
+  isShell: 0
+  shotgunShellFragment: {fileID: 0}
+  shellAmountRange: {x: 0, y: 0}
+  isShellFragment: 0
+  originalShellHit: {fileID: 0}

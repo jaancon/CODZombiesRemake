@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
             ammo = new Dictionary<weaponType, int>
             {
                 { weaponType.NonWeapon, 0 },
-                { weaponType.Pistol, 30 },
+                { weaponType.Pistol, 3000 },
                 { weaponType.Shotgun, 10 },
                 { weaponType.SMG, 60 },
                 { weaponType.Sniper, 5 },
@@ -74,13 +74,11 @@ public class Player : MonoBehaviour
             };
         }
         itemsInInventory = new Item[inventorySize];
-        itemsInInventory[0] = itemPool[4];
-        itemsInInventory[1] = itemPool[5];
+        itemsInInventory[0] = itemPool[0];
 
         itemsInInventory[0].inventoryIndex = 0;
-        itemsInInventory[1].inventoryIndex = 1;
 
-        for (int i = 2; i < itemsInInventory.Length; i++)
+        for (int i = 1; i < itemsInInventory.Length; i++)
         {
             itemsInInventory[i] = null;
         }
@@ -93,7 +91,7 @@ public class Player : MonoBehaviour
         {
             text += pair.Key.ToString() + ", " + pair.Value.ToString() + "\n";
         }
-        ammoText.text = text;
+        //ammoText.text = text;
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -115,11 +113,11 @@ public class Player : MonoBehaviour
         {
             UseItem(itemsInInventory[currentEquippedItem]);
         }
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && itemsInInventory[currentEquippedItem] != null)
         {
             itemsInInventory[currentEquippedItem].obj.transform.localPosition = itemsInInventory[currentEquippedItem].originalPosition +
                                                                             new Vector3(-0.3f, 0, 0);
-        } else
+        } else if (itemsInInventory[currentEquippedItem] != null)
         {
             itemsInInventory[currentEquippedItem].obj.transform.localPosition = itemsInInventory[currentEquippedItem].originalPosition;
         }
@@ -189,7 +187,7 @@ public class Player : MonoBehaviour
 
     private IEnumerator ShootWeapon()
     {
-
+        print(itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().isFullAuto);
         if (itemsInInventory[currentEquippedItem].obj.GetComponent<Gun>().isFullAuto)
         {
             while (Input.GetMouseButton(0)) 

@@ -16,9 +16,14 @@ public class Lootbox : MonoBehaviour
     private MeshFilter lbiFilter;
     private bool hasOpenedBox = false;
     private bool hasStoppedBox = false;
-
+    public int cost;
+    Mesh currentMesh;
+    Mesh previousMesh;
+       
     private void Start()
     {
+        currentMesh = new Mesh();
+        previousMesh = new Mesh();
         lbiFilter = lootboxItem.GetComponent<MeshFilter>();
         lbiFilter.mesh = null;
     }
@@ -28,6 +33,7 @@ public class Lootbox : MonoBehaviour
         if (!hasOpenedBox)
         {
             StartCoroutine(LootboxAnimation());
+            Money.scriptInstance.LoseMoney(cost);
             hasOpenedBox = true;
         }
     }
@@ -42,11 +48,18 @@ public class Lootbox : MonoBehaviour
 
     private IEnumerator LootboxAnimation()
     {
+        yield return new WaitForSeconds(1f);
+
         Player playerScript = GameObject.Find("Player").GetComponent<Player>();
 
         while (!hasStoppedBox)
         {
-            lbiFilter.mesh = meshes[UnityEngine.Random.Range(0, meshes.Length)];
+            previousMesh = currentMesh;
+            currentMesh = meshes[UnityEngine.Random.Range(0, meshes.Length)];
+
+            if (currentMesh == previousMesh) { yield return null; }
+
+            lbiFilter.mesh = currentMesh;
             yield return new WaitForSeconds(0.3f);
         }
 
@@ -58,5 +71,15 @@ public class Lootbox : MonoBehaviour
         Debug.Log(name);
 
         playerScript.SwitchLoadout(playerScript.currentEquippedItem, randomNumber);
+        StartCoroutine(ResetBox());
+        yield break;
+    }
+
+    private IEnumerator ResetBox()
+    {
+        gameObject.GetComponent<Animator>().SetBool("Open", false);
+        yield return new WaitForSeconds(5f);
+        Instantiate(gameObject, transform.position, transform.rotation);
+        Destroy(gameObject);
     }
 }

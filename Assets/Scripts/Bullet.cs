@@ -17,9 +17,9 @@ public class Bullet : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if ((isShellFragment && other == originalShellHit) || other.CompareTag("Bullet")) { return; }
-        if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy")) { return; }
+        if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Zombie")) { return; }
 
-        float damage = gameObject.GetComponent<Rigidbody>().velocity.magnitude / 3;
+        float damage = gameObject.GetComponent<Rigidbody>().velocity.magnitude;
         other.gameObject.GetComponent<Health>().TakeDamage(damage);
 
         bool keepBullet = Random.Range(0, 100) <= penetrationChance;
